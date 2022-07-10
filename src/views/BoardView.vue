@@ -7,10 +7,12 @@
         :column="column"
       />
     </div>
+    <RouterView />
   </div>
 </template>
 
 <script lang="ts" setup>
+import { RouterView } from 'vue-router';
 import { useBoard } from '@/stores';
 
 import ColumnItem from '@/components/ColumnItem.vue';
