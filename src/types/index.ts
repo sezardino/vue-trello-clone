@@ -10,3 +10,21 @@ export interface Column {
   name: string;
   tasks: Task[];
 }
+
+export enum DragType {
+  TASK = 'task',
+  COLUMN = 'column',
+}
+
+export type ColumnDropPayload = {
+  type: DragType.COLUMN;
+  columnId: string;
+};
+
+export type TaskDropPayload = {
+  type: DragType.TASK;
+  fromColumnId: string;
+  taskId: string;
+};
+
+export type DropPayload = ColumnDropPayload | TaskDropPayload;

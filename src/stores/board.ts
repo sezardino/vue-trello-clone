@@ -32,7 +32,7 @@ export const useBoard = defineStore('board', {
       state.columns.find((column) => column.id === id),
   },
   actions: {
-    createTask(column: Column, name: string) {
+    createTask(columnId: string, name: string) {
       const newTask: Task = {
         name,
         id: uuid(),
@@ -40,7 +40,15 @@ export const useBoard = defineStore('board', {
         userAssigned: null,
       };
 
-      column.tasks.push(newTask);
+      const neededColumn = this.columns.find(
+        (column) => column.id === columnId
+      );
+
+      if (!neededColumn) {
+        return;
+      }
+
+      neededColumn.tasks.push(newTask);
     },
     createColumn(name: string) {
       const newColumn: Column = {
@@ -54,7 +62,12 @@ export const useBoard = defineStore('board', {
     updateTask(task: Task, key: keyof Task, value: string) {
       task[key] = value;
     },
-    moveTask(fromColumnId: string, toColumnId: string, taskId: string) {
+    moveTask(
+      fromColumnId: string,
+      toColumnId: string,
+      taskId: string,
+      toTaskId?: string
+    ) {
       const fromColumn = this.getColumnById(fromColumnId);
       const toColumn = this.getColumnById(toColumnId);
 
@@ -65,11 +78,20 @@ export const useBoard = defineStore('board', {
       const taskIndex = fromColumn.tasks.findIndex(
         (task) => task.id === taskId
       );
+      const toTaskIndex = toColumn.tasks.findIndex(
+        (task) => task.id === toTaskId
+      );
+
       const taskToMove = fromColumn.tasks.splice(taskIndex, 1)[0];
+
+      if (toTaskIndex !== -1) {
+        toColumn.tasks.splice(toTaskIndex, 0, taskToMove);
+        return;
+      }
 
       toColumn.tasks.push(taskToMove);
     },
-    moveBoard(columnId: string, toColumnId: string) {
+    moveColumn(columnId: string, toColumnId: string) {
       const toColumnIndex = this.columns.findIndex(
         (column) => column.id === toColumnId
       );
