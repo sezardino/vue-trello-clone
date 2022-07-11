@@ -12,7 +12,7 @@
         </div>
       </div>
       <div>
-        <div class="mt-2"></div>
+        <div class="mt-2">
           <textarea
             v-model="description.value.value"
             class="w-full resize-none p-2 outline-none h-20"

@@ -3,7 +3,7 @@
     <p class="task-field">
       {{ task.name }}
     </p>
-    <small class="task-field">
+    <small v-if="task.description" class="task-field">
       {{ task.description }}
     </small>
   </div>
@@ -25,6 +25,6 @@ defineProps<Props>();
 }
 
 .task-field {
-  @apply w-full font-bold;
+  @apply w-full font-bold mt-1;
 }
 </style>

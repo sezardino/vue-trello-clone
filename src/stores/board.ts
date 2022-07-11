@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { defaultBoard } from '@/db';
 import type { Column, Task } from '@/types';
+import { uuid } from '@/utils';
 
 interface RootState {
   columns: Column[];
@@ -15,7 +16,6 @@ export const useBoard = defineStore('board', {
 
     return defaultBoard;
   },
-  actions: {},
   getters: {
     getTaskById:
       (state: RootState) =>
@@ -28,5 +28,20 @@ export const useBoard = defineStore('board', {
           }
         }
       },
+  },
+  actions: {
+    updateTask(task: Task, key: keyof Task, value: string) {
+      task[key] = value;
+    },
+    createTask(column: Column, name: string) {
+      const newTask: Task = {
+        name,
+        id: uuid(),
+        description: '',
+        userAssigned: null,
+      };
+
+      column.tasks.push(newTask);
+    },
   },
 });
