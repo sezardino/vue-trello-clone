@@ -1,5 +1,11 @@
 <template>
-  <div class="column" @dragover.prevent @drop="onDrop($event, column.id)">
+  <div
+    class="column"
+    @dragover.prevent
+    draggable="true"
+    @dragstart.self="onColumnDrag($event, column.id)"
+    @drop="onDrop($event, column.id)"
+  >
     <div class="column-name">
       {{ column.name }}
     </div>
@@ -9,8 +15,10 @@
           v-for="task of column.tasks"
           :key="task.id"
           draggable="true"
+          @dragover.prevent
           @click.stop="onTaskClick(task.id)"
-          @dragstart="onDragStart($event, task.id, column.id)"
+          @drop.stop="onDrop($event, column.id)"
+          @dragstart="onTaskDrag($event, task.id, column.id)"
         >
           <TaskItem :task="task" />
         </li>
@@ -64,16 +72,36 @@ const onAddTask = async () => {
   }
 };
 
-const onDragStart = (evt: DragEvent, taskId: string, columnId: string) => {
+const onTaskDrag = (evt: DragEvent, taskId: string, columnId: string) => {
   if (!evt.dataTransfer) {
     return;
   }
 
+  evt.dataTransfer.setData('drag-event', 'task');
   evt.dataTransfer.setData('task-id', taskId);
   evt.dataTransfer.setData('from-column-id', columnId);
 };
 
-const onDrop = (evt: DragEvent, columnId: string) => {
+const onColumnDrag = (evt: DragEvent, columnId: string) => {
+  if (!evt.dataTransfer) {
+    return;
+  }
+
+  evt.dataTransfer.setData('drag-event', 'column');
+  evt.dataTransfer.setData('column-id', columnId);
+};
+
+const columnDropHandler = (evt: DragEvent, toColumnId: string) => {
+  if (!evt.dataTransfer) {
+    return;
+  }
+
+  const columnId = evt.dataTransfer.getData('column-id');
+
+  board.moveBoard(columnId, toColumnId);
+};
+
+const taskDropHandler = (evt: DragEvent, columnId: string) => {
   if (!evt.dataTransfer) {
     return;
   }
@@ -82,6 +110,25 @@ const onDrop = (evt: DragEvent, columnId: string) => {
   const taskId = evt.dataTransfer.getData('task-id');
 
   board.moveTask(fromColumnId, columnId, taskId);
+};
+
+const onDrop = (evt: DragEvent, columnId: string) => {
+  if (!evt.dataTransfer) {
+    return;
+  }
+  const eventType = evt.dataTransfer.getData('drag-event');
+
+  if (eventType === 'column') {
+    columnDropHandler(evt, columnId);
+
+    return;
+  }
+
+  if (eventType === 'task') {
+    taskDropHandler(evt, columnId);
+
+    return;
+  }
 };
 </script>
 

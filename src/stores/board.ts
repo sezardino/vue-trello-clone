@@ -60,5 +60,23 @@ export const useBoard = defineStore('board', {
 
       toColumn.tasks.push(taskToMove);
     },
+    moveBoard(columnId: string, toColumnId: string) {
+      const toColumnIndex = this.columns.findIndex(
+        (column) => column.id === toColumnId
+      );
+      const columnIndex = this.columns.findIndex(
+        (column) => column.id === columnId
+      );
+
+      if (columnIndex === -1 || toColumnIndex === -1) {
+        return;
+      }
+
+      this.columns.splice(
+        toColumnIndex,
+        0,
+        this.columns.splice(columnIndex, 1)[0]
+      );
+    },
   },
 });
