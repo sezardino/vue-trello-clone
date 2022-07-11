@@ -21,7 +21,8 @@ html {
   height: 100%;
 }
 
-.container {
-  @apply mx-auto;
+.column {
+  @apply bg-gray-400 p-2 mr-4 text-left shadow rounded;
+  min-width: 350px;
 }
 </style>

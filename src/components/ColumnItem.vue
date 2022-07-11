@@ -133,11 +133,6 @@ const onDrop = (evt: DragEvent, columnId: string) => {
 </script>
 
 <style scoped>
-.column {
-  @apply bg-gray-400 p-2 mr-4 text-left shadow rounded;
-  min-width: 350px;
-}
-
 .column-name {
   @apply flex items-center mb-2 font-bold;
 }

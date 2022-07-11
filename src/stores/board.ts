@@ -32,9 +32,6 @@ export const useBoard = defineStore('board', {
       state.columns.find((column) => column.id === id),
   },
   actions: {
-    updateTask(task: Task, key: keyof Task, value: string) {
-      task[key] = value;
-    },
     createTask(column: Column, name: string) {
       const newTask: Task = {
         name,
@@ -44,6 +41,18 @@ export const useBoard = defineStore('board', {
       };
 
       column.tasks.push(newTask);
+    },
+    createColumn(name: string) {
+      const newColumn: Column = {
+        name,
+        id: uuid(),
+        tasks: [],
+      };
+
+      this.columns.push(newColumn);
+    },
+    updateTask(task: Task, key: keyof Task, value: string) {
+      task[key] = value;
     },
     moveTask(fromColumnId: string, toColumnId: string, taskId: string) {
       const fromColumn = this.getColumnById(fromColumnId);
