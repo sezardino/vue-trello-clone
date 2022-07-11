@@ -1,5 +1,5 @@
 <template>
-  <div class="column">
+  <div class="column" @dragover.prevent @drop="onDrop($event, column.id)">
     <div class="column-name">
       {{ column.name }}
     </div>
@@ -8,7 +8,9 @@
         <li
           v-for="task of column.tasks"
           :key="task.id"
-          @click="onTaskClick(task.id)"
+          draggable="true"
+          @click.stop="onTaskClick(task.id)"
+          @dragstart="onDragStart($event, task.id, column.id)"
         >
           <TaskItem :task="task" />
         </li>
@@ -60,6 +62,26 @@ const onAddTask = async () => {
     setValue('');
     inputRef.value?.blur();
   }
+};
+
+const onDragStart = (evt: DragEvent, taskId: string, columnId: string) => {
+  if (!evt.dataTransfer) {
+    return;
+  }
+
+  evt.dataTransfer.setData('task-id', taskId);
+  evt.dataTransfer.setData('from-column-id', columnId);
+};
+
+const onDrop = (evt: DragEvent, columnId: string) => {
+  if (!evt.dataTransfer) {
+    return;
+  }
+
+  const fromColumnId = evt.dataTransfer.getData('from-column-id');
+  const taskId = evt.dataTransfer.getData('task-id');
+
+  board.moveTask(fromColumnId, columnId, taskId);
 };
 </script>
 

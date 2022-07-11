@@ -28,6 +28,8 @@ export const useBoard = defineStore('board', {
           }
         }
       },
+    getColumnById: (state: RootState) => (id: string) =>
+      state.columns.find((column) => column.id === id),
   },
   actions: {
     updateTask(task: Task, key: keyof Task, value: string) {
@@ -42,6 +44,21 @@ export const useBoard = defineStore('board', {
       };
 
       column.tasks.push(newTask);
+    },
+    moveTask(fromColumnId: string, toColumnId: string, taskId: string) {
+      const fromColumn = this.getColumnById(fromColumnId);
+      const toColumn = this.getColumnById(toColumnId);
+
+      if (!fromColumn || !toColumn) {
+        return;
+      }
+
+      const taskIndex = fromColumn.tasks.findIndex(
+        (task) => task.id === taskId
+      );
+      const taskToMove = fromColumn.tasks.splice(taskIndex, 1)[0];
+
+      toColumn.tasks.push(taskToMove);
     },
   },
 });
